@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+  xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:http="http://www.mulesoft.org/schema/mule/http"
+  xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+  xmlns:scheduler="http://www.mulesoft.org/schema/mule/scheduler"
+  xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+  http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+  http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+  http://www.mulesoft.org/schema/mule/scheduler http://www.mulesoft.org/schema/mule/scheduler/current/mule-scheduler.xsd">
+  
+  <!-- Configuration Properties -->
+  <configuration-properties file="config.properties" doc:name="Configuration properties"/>
+
+  <!-- HTTP Listener Configuration -->
+  <http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config">
+    <http:listener-connection host="0.0.0.0" port="8082" />
+  </http:listener-config>
+
+  <!-- HTTP Request Configuration for System APIs -->
+  <http:request-config name="Core_Banking_Customers_System_API_Config" doc:name="Core Banking Customers System API Config">
+    <http:request-connection host="${core.banking.customers.api.host}" port="${core.banking.customers.api.port}" />
+  </http:request-config>
+
+  <http:request-config name="Core_Banking_Accounts_System_API_Config" doc:name="Core Banking Accounts System API Config">
+    <http:request-connection host="${core.banking.accounts.api.host}" port="${core.banking.accounts.api.port}" />
+  </http:request-config>
+
+  <http:request-config name="Global_Party_System_API_Config" doc:name="Global Party System API Config">
+    <http:request-connection host="${global.party.api.host}" port="${global.party.api.port}" />
+  </http:request-config>
+
+  <http:request-config name="Global_Financial_Account_System_API_Config" doc:name="Global Financial Account System API Config">
+    <http:request-connection host="${global.financial.account.api.host}" port="${global.financial.account.api.port}" />
+  </http:request-config>
+
+</mule>

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+  xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+  xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+  xmlns:http="http://www.mulesoft.org/schema/mule/http"
+  xmlns:scheduler="http://www.mulesoft.org/schema/mule/scheduler"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+  http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+  http://www.mulesoft.org/schema/mule/scheduler http://www.mulesoft.org/schema/mule/scheduler/current/mule-scheduler.xsd">
+
+  <!-- Scheduled Flow: Sync Customers Periodically -->
+  <flow name="scheduled-sync-customers-flow" doc:name="scheduled-sync-customers-flow">
+    <scheduler doc:name="Scheduler">
+      <scheduling-strategy>
+        <fixed-frequency frequency="${scheduler.frequency}" startDelay="${scheduler.startDelay}"/>
+      </scheduling-strategy>
+    </scheduler>
+    
+    <logger level="INFO" message="Starting scheduled customer sync" doc:name="Log Start"/>
+    
+    <ee:transform doc:name="Set Default Payload">
+      <ee:message>
+        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  lastSyncDate: null,
+  customerIds: null
+}]]></ee:set-payload>
+      </ee:message>
+    </ee:transform>
+    
+    <flow-ref name="sync-customers-subflow" doc:name="Sync Customers"/>
+    
+    <logger level="INFO" message="Completed scheduled customer sync" doc:name="Log Complete"/>
+  </flow>
+
+  <!-- POST /sync/customers - Business Logic Flow -->
+  <flow name="sync-customers-business-logic" doc:name="sync-customers-business-logic">
+    <flow-ref name="sync-customers-subflow" doc:name="Sync Customers"/>
+    
+    <ee:transform doc:name="Transform Response">
+      <ee:message>
+        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  message: "Customer sync completed",
+  syncId: uuid(),
+  timestamp: now()
+}]]></ee:set-payload>
+      </ee:message>
+    </ee:transform>
+
+    <http:response statusCode="202" doc:name="HTTP Response"/>
+  </flow>
+
+  <!-- Subflow: Sync Customers -->
+  <sub-flow name="sync-customers-subflow" doc:name="sync-customers-subflow">
+    <try doc:name="Try">
+      <http:request method="GET" config-ref="Core_Banking_Customers_System_API_Config" path="/api/customers" doc:name="Get Customers from Core Banking">
+        <http:query-params><![CDATA[#[{
+          "limit": "100",
+          "offset": "0"
+        }]]]></http:query-params>
+      </http:request>
+
+      <foreach doc:name="For Each Customer">
+        <ee:transform doc:name="Transform to Global Party Format">
+          <ee:message>
+            <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+var customer = payload
+---
+{
+  globalId: null,
+  partyType: customer.party.partyType,
+  firstName: customer.party.firstName,
+  lastName: customer.party.lastName,
+  middleName: customer.party.middleName,
+  organizationName: customer.party.organizationName,
+  dateOfBirth: customer.party.dateOfBirth,
+  taxId: customer.party.taxId,
+  externalIds: [{
+    system: "CoreBanking",
+    value: customer.id
+  }]
+}]]></ee:set-payload>
+          </ee:message>
+        </ee:transform>
+        
+        <http:request method="POST" config-ref="Global_Party_System_API_Config" path="/api/global/parties" doc:name="Upsert to Global Party">
+          <http:body><![CDATA[#[payload]]]></http:body>
+        </http:request>
+      </foreach>
+      
+      <error-handler>
+        <on-error-continue type="HTTP:REQUEST" enableNotifications="true" logException="true" doc:name="Continue on Error">
+          <logger level="ERROR" message="Error syncing customer: #[error.description]" doc:name="Log Error"/>
+        </on-error-continue>
+      </error-handler>
+    </try>
+  </sub-flow>
+
+  <!-- POST /sync/accounts - Business Logic Flow -->
+  <flow name="sync-accounts-business-logic" doc:name="sync-accounts-business-logic">
+    <try doc:name="Try">
+      <http:request method="GET" config-ref="Core_Banking_Accounts_System_API_Config" path="/api/accounts" doc:name="Get Accounts from Core Banking">
+        <http:query-params><![CDATA[#[{
+          "limit": "100",
+          "offset": "0"
+        }]]]></http:query-params>
+      </http:request>
+
+      <foreach doc:name="For Each Account">
+        <ee:transform doc:name="Transform to Global Account Format">
+          <ee:message>
+            <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+var account = payload
+---
+{
+  globalId: null,
+  accountNumber: account.accountNumber,
+  accountType: account.accountType,
+  accountName: account.accountName,
+  currency: account.currency,
+  balance: account.balance,
+  availableBalance: account.availableBalance,
+  status: account.status,
+  openedDate: account.openedDate,
+  closedDate: account.closedDate,
+  interestRate: account.interestRate,
+  owners: account.owners default []
+}]]></ee:set-payload>
+          </ee:message>
+        </ee:transform>
+        
+        <http:request method="POST" config-ref="Global_Financial_Account_System_API_Config" path="/api/global/accounts" doc:name="Upsert to Global Financial Account">
+          <http:body><![CDATA[#[payload]]]></http:body>
+        </http:request>
+      </foreach>
+      
+      <ee:transform doc:name="Transform Response">
+        <ee:message>
+          <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  message: "Account sync completed",
+  syncId: uuid(),
+  timestamp: now()
+}]]></ee:set-payload>
+        </ee:message>
+      </ee:transform>
+
+      <http:response statusCode="202" doc:name="HTTP Response"/>
+      
+      <error-handler>
+        <on-error-propagate type="HTTP:REQUEST" enableNotifications="true" logException="true" doc:name="HTTP Error">
+          <ee:transform doc:name="Transform Error">
+            <ee:message>
+              <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  error: {
+    code: "SYNC_ERROR",
+    message: "An error occurred while syncing accounts",
+    timestamp: now()
+  }
+}]]></ee:set-payload>
+            </ee:message>
+          </ee:transform>
+          <http:response statusCode="500" doc:name="HTTP Response"/>
+        </on-error-propagate>
+      </error-handler>
+    </try>
+  </flow>
+
+</mule>

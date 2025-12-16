@@ -1,0 +1,63 @@
+#%RAML 1.0
+title: Core Banking Poller Process API
+version: 1.0.0
+baseUri: http://localhost:8082/api/process/pollers/core-banking
+mediaType: application/json
+
+documentation:
+  - title: Overview
+    content: API de processus pour synchroniser périodiquement les données de Core Banking vers Global Data et Salesforce
+
+types:
+  SyncResult:
+    type: object
+    properties:
+      success: boolean
+      recordsProcessed: integer
+      recordsCreated: integer
+      recordsUpdated: integer
+      errors:
+        type: array
+        items: string
+  ErrorResponse:
+    type: object
+    properties:
+      error:
+        type: object
+        properties:
+          code: string
+          message: string
+
+/sync:
+  displayName: Synchronization
+  
+  /customers:
+    displayName: Sync Customers
+    post:
+      displayName: Trigger Customer Sync
+      description: Déclenche manuellement la synchronisation des clients depuis Core Banking
+      responses:
+        200:
+          body:
+            application/json:
+              type: SyncResult
+        400:
+          body:
+            application/json:
+              type: ErrorResponse
+  
+  /accounts:
+    displayName: Sync Accounts
+    post:
+      displayName: Trigger Account Sync
+      description: Déclenche manuellement la synchronisation des comptes depuis Core Banking
+      responses:
+        200:
+          body:
+            application/json:
+              type: SyncResult
+        400:
+          body:
+            application/json:
+              type: ErrorResponse
+

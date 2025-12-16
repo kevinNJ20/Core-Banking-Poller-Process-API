@@ -1,0 +1,7 @@
+{
+  "name": "core-banking-poller-process-api",
+  "minMuleVersion": "4.10.0",
+  "javaSpecificationVersions": [
+    "17"
+  ]
+}
