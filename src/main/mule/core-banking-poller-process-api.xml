@@ -2,11 +2,13 @@
 <mule xmlns="http://www.mulesoft.org/schema/mule/core"
   xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
   xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+  xmlns:anypoint-mq="http://www.mulesoft.org/schema/mule/anypoint-mq"
   xmlns:http="http://www.mulesoft.org/schema/mule/http"
   xmlns:scheduler="http://www.mulesoft.org/schema/mule/scheduler"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
   http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+  http://www.mulesoft.org/schema/mule/anypoint-mq http://www.mulesoft.org/schema/mule/anypoint-mq/current/mule-anypoint-mq.xsd
   http://www.mulesoft.org/schema/mule/scheduler http://www.mulesoft.org/schema/mule/scheduler/current/mule-scheduler.xsd">
 
   <!-- Scheduled Flow: Sync Customers Periodically -->
@@ -93,6 +95,34 @@ var customer = payload
         <http:request method="POST" config-ref="Global_Party_System_API_Config" path="/api/global/parties" doc:name="Upsert to Global Party">
           <http:body><![CDATA[#[payload]]]></http:body>
         </http:request>
+
+        <ee:transform doc:name="Transform to MQ Message for Party Roles Topic">
+          <ee:message>
+            <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+var party = payload
+---
+{
+  eventType: "customer.update",
+  customerId: party.externalIds[0].value default null,
+  customerNumber: null,
+  firstName: party.firstName,
+  lastName: party.lastName,
+  partyType: party.partyType,
+  taxId: party.taxId default null,
+  status: "Active",
+  timestamp: now()
+}]]></ee:set-payload>
+          </ee:message>
+        </ee:transform>
+
+        <anypoint-mq:publish doc:name="Publish to Party Roles Topic" config-ref="Anypoint_MQ_Config" destination="Party Roles Topic">
+          <anypoint-mq:message>
+            <anypoint-mq:body><![CDATA[#[payload]]]></anypoint-mq:body>
+          </anypoint-mq:message>
+        </anypoint-mq:publish>
+
+        <logger level="INFO" message="Published customer update to Party Roles Topic" doc:name="Log MQ Publish"/>
       </foreach>
       
       <error-handler>
@@ -140,6 +170,33 @@ var account = payload
         <http:request method="POST" config-ref="Global_Financial_Account_System_API_Config" path="/api/global/accounts" doc:name="Upsert to Global Financial Account">
           <http:body><![CDATA[#[payload]]]></http:body>
         </http:request>
+
+        <ee:transform doc:name="Transform to MQ Message for Accounts Topic">
+          <ee:message>
+            <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+var account = payload
+---
+{
+  eventType: "account.update",
+  accountId: account.globalId default null,
+  accountNumber: account.accountNumber,
+  accountType: account.accountType,
+  accountName: account.accountName default null,
+  balance: account.balance default 0.00,
+  status: account.status default "Active",
+  timestamp: now()
+}]]></ee:set-payload>
+          </ee:message>
+        </ee:transform>
+
+        <anypoint-mq:publish doc:name="Publish to Accounts Topic" config-ref="Anypoint_MQ_Config" destination="Accounts Topic">
+          <anypoint-mq:message>
+            <anypoint-mq:body><![CDATA[#[payload]]]></anypoint-mq:body>
+          </anypoint-mq:message>
+        </anypoint-mq:publish>
+
+        <logger level="INFO" message="Published account update to Accounts Topic" doc:name="Log MQ Publish"/>
       </foreach>
       
       <ee:transform doc:name="Transform Response">

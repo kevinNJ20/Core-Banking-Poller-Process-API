@@ -94,6 +94,14 @@
       <classifier>mule-plugin</classifier>
     </dependency>
     
+    <!-- Anypoint MQ Connector -->
+    <dependency>
+      <groupId>com.mulesoft.connectors</groupId>
+      <artifactId>mule-anypoint-mq-connector</artifactId>
+      <version>5.4.3</version>
+      <classifier>mule-plugin</classifier>
+    </dependency>
+    
     <!-- MUnit (for testing) -->
     <dependency>
       <groupId>org.mule.tests</groupId>
