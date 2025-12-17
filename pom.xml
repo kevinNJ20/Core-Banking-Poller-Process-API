@@ -98,7 +98,7 @@
     <dependency>
       <groupId>com.mulesoft.connectors</groupId>
       <artifactId>mule-anypoint-mq-connector</artifactId>
-      <version>5.4.3</version>
+      <version>5.6.0</version>
       <classifier>mule-plugin</classifier>
     </dependency>
     
