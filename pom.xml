@@ -56,46 +56,11 @@
 		</pluginRepository>
 	</pluginRepositories>
 	<dependencies>
-		<!-- Mule HTTP Connector -->
-		<dependency>
-			<groupId>org.mule.connectors</groupId>
-			<artifactId>mule-http-connector</artifactId>
-			<version>1.11.1</version>
-			<classifier>mule-plugin</classifier>
-		</dependency>
 		<!-- Mule Scheduler Module -->
 		<dependency>
 			<groupId>org.mule.modules</groupId>
 			<artifactId>mule-scheduler-module</artifactId>
 			<version>1.2.0</version>
-			<classifier>mule-plugin</classifier>
-		</dependency>
-		<!-- DataWeave Validation Module -->
-		<dependency>
-			<groupId>org.mule.modules</groupId>
-			<artifactId>mule-validation-module</artifactId>
-			<version>2.1.4</version>
-			<classifier>mule-plugin</classifier>
-		</dependency>
-		<!-- JSON Module -->
-		<dependency>
-			<groupId>org.mule.modules</groupId>
-			<artifactId>mule-json-module</artifactId>
-			<version>2.5.5</version>
-			<classifier>mule-plugin</classifier>
-		</dependency>
-		<!-- APIkit Router -->
-		<dependency>
-			<groupId>org.mule.modules</groupId>
-			<artifactId>mule-apikit-module</artifactId>
-			<version>2.4.4</version>
-			<classifier>mule-plugin</classifier>
-		</dependency>
-		<!-- Anypoint MQ Connector -->
-		<dependency>
-			<groupId>com.mulesoft.connectors</groupId>
-			<artifactId>mule-anypoint-mq-connector</artifactId>
-			<version>5.6.0</version>
 			<classifier>mule-plugin</classifier>
 		</dependency>
 		<!-- MUnit (for testing) -->
@@ -104,6 +69,36 @@
 			<artifactId>mule-tests-functional</artifactId>
 			<version>4.10.0</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.modules</groupId>
+			<artifactId>mule-apikit-module</artifactId>
+			<version>1.11.10</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.connectors</groupId>
+			<artifactId>mule-http-connector</artifactId>
+			<version>1.11.0</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.modules</groupId>
+			<artifactId>mule-validation-module</artifactId>
+			<version>2.0.8</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.modules</groupId>
+			<artifactId>mule-json-module</artifactId>
+			<version>2.5.4</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>com.mulesoft.connectors</groupId>
+			<artifactId>anypoint-mq-connector</artifactId>
+			<version>4.0.14</version>
+			<classifier>mule-plugin</classifier>
 		</dependency>
 	</dependencies>
 </project>

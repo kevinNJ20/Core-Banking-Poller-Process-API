@@ -39,7 +39,8 @@
 
   <!-- Anypoint MQ Configuration -->
   <anypoint-mq:config name="Anypoint_MQ_Config" doc:name="Anypoint MQ Config">
-    <anypoint-mq:basic-connection 
+    <anypoint-mq:connection url="${anypoint.mq.url}" clientId="${anypoint.mq.clientId}" clientSecret="${anypoint.mq.clientSecret}" />
+		<anypoint-mq:basic-connection 
       clientId="${anypoint.mq.clientId}"
       clientSecret="${anypoint.mq.clientSecret}"
       url="${anypoint.mq.url}"/>
