@@ -116,7 +116,7 @@ var party = payload
           </ee:message>
         </ee:transform>
 
-        <anypoint-mq:publish doc:name="Publish to Party Roles Topic" config-ref="Anypoint_MQ_Config" destination="Party Roles Topic">
+        <anypoint-mq:publish doc:name="Publish to Party Roles Topic" config-ref="Anypoint_MQ_Config" destination="Party-Roles-Queue">
           <anypoint-mq:message>
             <anypoint-mq:body><![CDATA[#[payload]]]></anypoint-mq:body>
           </anypoint-mq:message>
@@ -190,7 +190,7 @@ var account = payload
           </ee:message>
         </ee:transform>
 
-        <anypoint-mq:publish doc:name="Publish to Accounts Topic" config-ref="Anypoint_MQ_Config" destination="Accounts Topic">
+        <anypoint-mq:publish doc:name="Publish to Accounts Topic" config-ref="Anypoint_MQ_Config" destination="Accounts-Queue">
           <anypoint-mq:message>
             <anypoint-mq:body><![CDATA[#[payload]]]></anypoint-mq:body>
           </anypoint-mq:message>
