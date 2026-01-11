@@ -23,7 +23,7 @@ http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/m
         <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
       </http:error-response>
     </http:listener>
-    <apikit:router doc:name="APIkit Router" doc:id="db94be96-6a0c-45af-be42-2829581962fb" config-ref="core-banking-poller-process-api-config"/>
+		<apikit:router doc:name="APIkit Router" doc:id="2ff04b37-534d-40d9-81f8-dbd275214388" config-ref="core-banking-poller-process-api.raml"/>
 		<error-handler>
       <on-error-propagate type="APIKIT:NOT_FOUND" enableNotifications="true" logException="true" doc:name="On Error Propagate">
         <ee:transform doc:name="Transform Error Response">
@@ -132,8 +132,8 @@ output application/json
         <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
       </http:error-response>
     </http:listener>
-    <apikit:console doc:name="APIkit Console" config-ref="core-banking-poller-process-api-config"/>
-    <error-handler>
+    <apikit:console doc:name="APIkit Console" doc:id="f2cceb1c-c4f4-4c1b-bd14-3ed193c3561f" config-ref="core-banking-poller-process-api.raml"/>
+		<error-handler>
       <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" type="APIKIT:NOT_FOUND">
         <ee:transform doc:name="Transform Error Response">
           <ee:message>
