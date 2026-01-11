@@ -15,7 +15,14 @@ http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/m
 
   <!-- Main HTTP Listener with APIkit Router -->
   <flow name="main">
-    <http:listener config-ref="HTTP_Listener_config" path="/api/*" doc:name="HTTP Listener"/>
+    <http:listener config-ref="HTTP_Listener_config" path="/api/*" doc:name="HTTP Listener">
+      <http:response statusCode="#[vars.httpStatus default 200]">
+        <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+      </http:response>
+      <http:error-response statusCode="#[vars.httpStatus default 500]">
+        <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+      </http:error-response>
+    </http:listener>
     <apikit:router doc:name="APIkit Router" doc:id="db94be96-6a0c-45af-be42-2829581962fb" config-ref="core-banking-poller-process-api-config"/>
 		<error-handler>
       <on-error-propagate type="APIKIT:NOT_FOUND" enableNotifications="true" logException="true" doc:name="On Error Propagate">
@@ -114,6 +121,105 @@ output application/json
   <!-- POST /sync/accounts -->
   <flow name="post:\sync\accounts:core-banking-poller-process-api-config">
     <flow-ref name="sync-accounts-business-logic" doc:name="sync-accounts-business-logic"/>
+  </flow>
+
+  <flow name="console" doc:id="console-core-banking-poller">
+    <http:listener doc:name="HTTP Listener" config-ref="HTTP_Listener_config" path="/console/*">
+      <http:response statusCode="#[vars.httpStatus default 200]">
+        <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+      </http:response>
+      <http:error-response statusCode="#[vars.httpStatus default 500]">
+        <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+      </http:error-response>
+    </http:listener>
+    <apikit:console doc:name="APIkit Console" config-ref="core-banking-poller-process-api-config"/>
+    <error-handler>
+      <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" type="APIKIT:NOT_FOUND">
+        <ee:transform doc:name="Transform Error Response">
+          <ee:message>
+            <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  error: {
+    code: "NOT_FOUND",
+    message: "Resource not found",
+    timestamp: now()
+  }
+}]]></ee:set-payload>
+          </ee:message>
+        </ee:transform>
+        <set-variable value="404" doc:name="httpStatus" variableName="httpStatus" />
+      </on-error-propagate>
+      <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" type="APIKIT:BAD_REQUEST">
+        <ee:transform doc:name="Transform Error Response">
+          <ee:message>
+            <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  error: {
+    code: "BAD_REQUEST",
+    message: error.description default "Bad request",
+    timestamp: now()
+  }
+}]]></ee:set-payload>
+          </ee:message>
+        </ee:transform>
+        <set-variable value="400" doc:name="httpStatus" variableName="httpStatus" />
+      </on-error-propagate>
+      <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" type="APIKIT:NOT_ACCEPTABLE">
+        <ee:transform doc:name="Transform Error Response">
+          <ee:message>
+            <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  error: {
+    code: "NOT_ACCEPTABLE",
+    message: "Content type not acceptable",
+    timestamp: now()
+  }
+}]]></ee:set-payload>
+          </ee:message>
+        </ee:transform>
+        <set-variable value="406" doc:name="httpStatus" variableName="httpStatus" />
+      </on-error-propagate>
+      <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+        <ee:transform doc:name="Transform Error Response">
+          <ee:message>
+            <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  error: {
+    code: "UNSUPPORTED_MEDIA_TYPE",
+    message: "Unsupported media type",
+    timestamp: now()
+  }
+}]]></ee:set-payload>
+          </ee:message>
+        </ee:transform>
+        <set-variable value="415" doc:name="httpStatus" variableName="httpStatus" />
+      </on-error-propagate>
+      <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" type="APIKIT:METHOD_NOT_ALLOWED">
+        <ee:transform doc:name="Transform Error Response">
+          <ee:message>
+            <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  error: {
+    code: "METHOD_NOT_ALLOWED",
+    message: "Method not allowed",
+    timestamp: now()
+  }
+}]]></ee:set-payload>
+          </ee:message>
+        </ee:transform>
+        <set-variable value="405" doc:name="httpStatus" variableName="httpStatus" />
+      </on-error-propagate>
+    </error-handler>
   </flow>
 
 </mule>

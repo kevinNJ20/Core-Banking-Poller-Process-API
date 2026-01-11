@@ -46,7 +46,7 @@ http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/m
       clientSecret="${anypoint.mq.clientSecret}"
       url="${anypoint.mq.url}"/>
   </anypoint-mq:config>
-	<apikit:config outboundHeadersMapName="outboundHeadersMapName" httpStatusVarName="httpStatus" doc:name="Router" doc:id="3f5b24f5-0e17-4a37-8b50-deb06604835a" name="core-banking-poller-process-api-config" api="core-banking-poller-process-api.raml" />
+	<apikit:config outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" doc:name="Router" doc:id="3f5b24f5-0e17-4a37-8b50-deb06604835a" name="core-banking-poller-process-api-config" api="core-banking-poller-process-api.raml" />
 
 
 </mule>
