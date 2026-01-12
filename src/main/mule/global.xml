@@ -41,12 +41,8 @@ http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/m
   <!-- Anypoint MQ Configuration -->
   <anypoint-mq:config name="Anypoint_MQ_Config" doc:name="Anypoint MQ Config">
     <anypoint-mq:connection url="${anypoint.mq.url}" clientId="${anypoint.mq.clientId}" clientSecret="${anypoint.mq.clientSecret}" />
-		<anypoint-mq:basic-connection 
-      clientId="${anypoint.mq.clientId}"
-      clientSecret="${anypoint.mq.clientSecret}"
-      url="${anypoint.mq.url}"/>
   </anypoint-mq:config>
-	<apikit:config outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" doc:name="Router" doc:id="dc070975-0261-41c2-a613-77f7eeea34a8" name="core-banking-poller-process-api.raml" api="core-banking-poller-process-api.raml" />
+	<apikit:config outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" doc:name="Router" doc:id="dc070975-0261-41c2-a613-77f7eeea34a8" name="core-banking-poller-process-api-config" api="core-banking-poller-process-api.raml" />
 
 
 
