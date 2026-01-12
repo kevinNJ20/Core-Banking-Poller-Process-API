@@ -7,6 +7,7 @@
   xmlns:scheduler="http://www.mulesoft.org/schema/mule/scheduler"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+  http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
   http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
   http://www.mulesoft.org/schema/mule/anypoint-mq http://www.mulesoft.org/schema/mule/anypoint-mq/current/mule-anypoint-mq.xsd
   http://www.mulesoft.org/schema/mule/scheduler http://www.mulesoft.org/schema/mule/scheduler/current/mule-scheduler.xsd">
@@ -76,14 +77,13 @@ output application/json
 var customer = payload
 ---
 {
-  globalId: null,
   partyType: customer.party.partyType,
-  firstName: customer.party.firstName,
-  lastName: customer.party.lastName,
-  middleName: customer.party.middleName,
-  organizationName: customer.party.organizationName,
-  dateOfBirth: customer.party.dateOfBirth,
-  taxId: customer.party.taxId,
+  firstName: customer.party.firstName default null,
+  lastName: customer.party.lastName default null,
+  (middleName: customer.party.middleName) if customer.party.middleName != null,
+  (organizationName: customer.party.organizationName) if customer.party.organizationName != null,
+  (dateOfBirth: customer.party.dateOfBirth) if customer.party.dateOfBirth != null,
+  (taxId: customer.party.taxId) if customer.party.taxId != null,
   externalIds: [{
     system: "CoreBanking",
     value: customer.id
@@ -92,8 +92,7 @@ var customer = payload
           </ee:message>
         </ee:transform>
         
-        <http:request method="POST" config-ref="Global_Party_System_API_Config" path="/api/global/parties" doc:name="Upsert to Global Party">
-          <http:body><![CDATA[#[payload]]]></http:body>
+        <http:request method="POST" config-ref="Global_Party_System_API_Config" path="/api/parties" doc:name="Upsert to Global Party">
         </http:request>
 
         <ee:transform doc:name="Transform to MQ Message for Party Roles Topic">
@@ -117,9 +116,7 @@ var party = payload
         </ee:transform>
 
         <anypoint-mq:publish doc:name="Publish to Party Roles Topic" config-ref="Anypoint_MQ_Config" destination="Party-Roles-Queue">
-          <anypoint-mq:message>
-            <anypoint-mq:body><![CDATA[#[payload]]]></anypoint-mq:body>
-          </anypoint-mq:message>
+          <anypoint-mq:body><![CDATA[#[payload]]]></anypoint-mq:body>
         </anypoint-mq:publish>
 
         <logger level="INFO" message="Published customer update to Party Roles Topic" doc:name="Log MQ Publish"/>
@@ -167,8 +164,7 @@ var account = payload
           </ee:message>
         </ee:transform>
         
-        <http:request method="POST" config-ref="Global_Financial_Account_System_API_Config" path="/api/global/accounts" doc:name="Upsert to Global Financial Account">
-          <http:body><![CDATA[#[payload]]]></http:body>
+        <http:request method="POST" config-ref="Global_Financial_Account_System_API_Config" path="/api/accounts" doc:name="Upsert to Global Financial Account">
         </http:request>
 
         <ee:transform doc:name="Transform to MQ Message for Accounts Topic">
@@ -191,9 +187,7 @@ var account = payload
         </ee:transform>
 
         <anypoint-mq:publish doc:name="Publish to Accounts Topic" config-ref="Anypoint_MQ_Config" destination="Accounts-Queue">
-          <anypoint-mq:message>
-            <anypoint-mq:body><![CDATA[#[payload]]]></anypoint-mq:body>
-          </anypoint-mq:message>
+          <anypoint-mq:body><![CDATA[#[payload]]]></anypoint-mq:body>
         </anypoint-mq:publish>
 
         <logger level="INFO" message="Published account update to Accounts Topic" doc:name="Log MQ Publish"/>
