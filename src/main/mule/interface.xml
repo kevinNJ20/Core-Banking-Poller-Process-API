@@ -113,12 +113,12 @@ output application/json
   </flow>
 
   <!-- POST /sync/customers -->
-  <flow name="post:\sync\customers:core-banking-poller-process-api-config">
+  <flow name="post:\sync\customers:application\json:core-banking-poller-process-api-config">
     <flow-ref name="sync-customers-business-logic" doc:name="sync-customers-business-logic"/>
   </flow>
 
   <!-- POST /sync/accounts -->
-  <flow name="post:\sync\accounts:core-banking-poller-process-api-config">
+  <flow name="post:\sync\accounts:application\json:core-banking-poller-process-api-config">
     <flow-ref name="sync-accounts-business-logic" doc:name="sync-accounts-business-logic"/>
   </flow>
 
