@@ -78,8 +78,8 @@ var customer = payload
 ---
 {
   partyType: customer.party.partyType,
-  firstName: customer.party.firstName default null,
-  lastName: customer.party.lastName default null,
+  (firstName: customer.party.firstName) if customer.party.firstName != null,
+  (lastName: customer.party.lastName) if customer.party.lastName != null,
   (middleName: customer.party.middleName) if customer.party.middleName != null,
   (organizationName: customer.party.organizationName) if customer.party.organizationName != null,
   (dateOfBirth: customer.party.dateOfBirth) if customer.party.dateOfBirth != null,
