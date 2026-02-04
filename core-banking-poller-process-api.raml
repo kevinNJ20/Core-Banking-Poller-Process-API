@@ -36,6 +36,11 @@ types:
     post:
       displayName: Trigger Customer Sync
       description: Déclenche manuellement la synchronisation des clients depuis Core Banking
+      body:
+        application/json:
+          type: object
+          required: false
+          example: {}
       responses:
         200:
           body:
@@ -51,6 +56,11 @@ types:
     post:
       displayName: Trigger Account Sync
       description: Déclenche manuellement la synchronisation des comptes depuis Core Banking
+      body:
+        application/json:
+          type: object
+          required: false
+          example: {}
       responses:
         200:
           body:

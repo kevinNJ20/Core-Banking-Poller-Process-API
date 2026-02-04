@@ -148,7 +148,7 @@ output application/json
 var account = payload
 ---
 {
-  globalId: null,
+  globalId: account.id,
   accountNumber: account.accountNumber,
   accountType: account.accountType,
   accountName: account.accountName,
@@ -159,7 +159,10 @@ var account = payload
   openedDate: account.openedDate,
   closedDate: account.closedDate,
   interestRate: account.interestRate,
-  owners: account.owners default []
+  owners: (account.owners default []) map ((owner, index) -> {
+    customerGlobalId: owner.customerId,
+    relationshipType: owner.relationshipType
+  })
 }]]></ee:set-payload>
           </ee:message>
         </ee:transform>
