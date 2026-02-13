@@ -16,7 +16,7 @@
   <flow name="scheduled-sync-customers-flow" doc:name="scheduled-sync-customers-flow">
     <scheduler doc:name="Scheduler">
       <scheduling-strategy>
-        <fixed-frequency frequency="${scheduler.frequency}" startDelay="${scheduler.startDelay}" timeUnit="HOURS"/>
+        <fixed-frequency frequency="${scheduler.frequency}" startDelay="${scheduler.startDelay}"/>
       </scheduling-strategy>
     </scheduler>
     
