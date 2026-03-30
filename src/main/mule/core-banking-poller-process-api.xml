@@ -40,7 +40,28 @@ output application/json
   </flow>
 
   <!-- POST /sync/customers - Business Logic Flow -->
-  <flow name="sync-customers-business-logic" doc:name="sync-customers-business-logic">
+  <flow name="scheduled-sync-accounts-flow" doc:id="96659b74-cdae-4a60-ad1e-e967d3642e87">
+		<scheduler doc:name="Scheduler" doc:id="60cec022-f680-4ff7-82fa-217e298acc94">
+			<scheduling-strategy>
+				<fixed-frequency frequency="${scheduler.frequency}" startDelay="${scheduler.startDelay}" />
+			</scheduling-strategy>
+		</scheduler>
+		<logger level="INFO" doc:name="Log Start" doc:id="92fdf827-111f-471f-b07b-6a0c45d804bf" message="Starting scheduled customer sync" />
+		<ee:transform doc:name="Set Default Payload" doc:id="6b042cd6-7ef5-42c8-97c9-5fe842c0da0d">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  lastSyncDate: null,
+  customerIds: null
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<flow-ref doc:name="Sync Customers" doc:id="e1e08099-0642-4f7c-87ba-142e09ef88e6" name="sync-accounts-business-logic" />
+		<logger level="INFO" doc:name="Log Complete" doc:id="2cdbc506-45d3-493d-af91-fb5a7d832b99" message="Completed scheduled customer sync" />
+	</flow>
+	<flow name="sync-customers-business-logic" doc:name="sync-customers-business-logic">
     <flow-ref name="sync-customers-subflow" doc:name="Sync Customers"/>
     
     <ee:transform doc:name="Transform Response">
@@ -131,7 +152,7 @@ var party = payload
   </sub-flow>
 
   <!-- POST /sync/accounts - Business Logic Flow -->
-  <flow name="sync-accounts-business-logic" doc:name="sync-accounts-business-logic">
+  <flow name="sync-accounts-business-logic" doc:name="sync-accounts-business-logic" doc:id="be602c8e-cdaa-4678-bbc2-5ea01d30d098">
     <try doc:name="Try">
       <http:request method="GET" config-ref="Core_Banking_Accounts_System_API_Config" path="/api/accounts" doc:name="Get Accounts from Core Banking">
         <http:query-params><![CDATA[#[{
@@ -232,5 +253,6 @@ output application/json
       </error-handler>
     </try>
   </flow>
+
 
 </mule>

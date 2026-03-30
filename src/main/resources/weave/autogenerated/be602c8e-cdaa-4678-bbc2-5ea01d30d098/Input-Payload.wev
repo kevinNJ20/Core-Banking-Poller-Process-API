@@ -1,0 +1,7 @@
+%dw 2.0
+
+type auto_be602c8e_cdaa_4678_bbc2_5ea01d30d098_Input_Payload = {|
+  lastSyncDate: Null, 
+  customerIds: Null
+|}
+
