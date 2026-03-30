@@ -46,7 +46,7 @@ output application/json
 				<fixed-frequency frequency="${scheduler.frequency}" startDelay="${scheduler.startDelay}" />
 			</scheduling-strategy>
 		</scheduler>
-		<logger level="INFO" doc:name="Log Start" doc:id="92fdf827-111f-471f-b07b-6a0c45d804bf" message="Starting scheduled customer sync" />
+		<logger level="INFO" doc:name="Log Start" doc:id="92fdf827-111f-471f-b07b-6a0c45d804bf" message="Starting scheduled accounts sync" />
 		<ee:transform doc:name="Set Default Payload" doc:id="6b042cd6-7ef5-42c8-97c9-5fe842c0da0d">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
@@ -58,8 +58,8 @@ output application/json
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<flow-ref doc:name="Sync Customers" doc:id="e1e08099-0642-4f7c-87ba-142e09ef88e6" name="sync-accounts-business-logic" />
-		<logger level="INFO" doc:name="Log Complete" doc:id="2cdbc506-45d3-493d-af91-fb5a7d832b99" message="Completed scheduled customer sync" />
+		<flow-ref doc:name="Sync Accounts" doc:id="e1e08099-0642-4f7c-87ba-142e09ef88e6" name="sync-accounts-business-logic" />
+		<logger level="INFO" doc:name="Log Complete" doc:id="2cdbc506-45d3-493d-af91-fb5a7d832b99" message="Completed scheduled accounts sync" />
 	</flow>
 	<flow name="sync-customers-business-logic" doc:name="sync-customers-business-logic">
     <flow-ref name="sync-customers-subflow" doc:name="Sync Customers"/>
