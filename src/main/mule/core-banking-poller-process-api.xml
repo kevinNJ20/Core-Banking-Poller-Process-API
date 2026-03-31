@@ -13,7 +13,7 @@
   http://www.mulesoft.org/schema/mule/scheduler http://www.mulesoft.org/schema/mule/scheduler/current/mule-scheduler.xsd">
 
   <!-- Scheduled Flow: Sync Customers Periodically -->
-  <flow name="scheduled-sync-customers-flow" doc:name="scheduled-sync-customers-flow" initialState="started">
+  <flow name="scheduled-sync-customers-flow" doc:name="scheduled-sync-customers-flow">
     <scheduler doc:name="Scheduler">
       <scheduling-strategy>
         <fixed-frequency frequency="${scheduler.frequency}" startDelay="${scheduler.startDelay}"/>
@@ -40,7 +40,7 @@ output application/json
   </flow>
 
   <!-- POST /sync/customers - Business Logic Flow -->
-  <flow name="scheduled-sync-accounts-flow" doc:id="96659b74-cdae-4a60-ad1e-e967d3642e87" initialState="stopped">
+  <flow name="scheduled-sync-accounts-flow" doc:id="96659b74-cdae-4a60-ad1e-e967d3642e87">
 		<scheduler doc:name="Scheduler" doc:id="60cec022-f680-4ff7-82fa-217e298acc94">
 			<scheduling-strategy>
 				<fixed-frequency frequency="${scheduler.frequency}" startDelay="${scheduler.startDelay}" />
