@@ -40,7 +40,7 @@ http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/
   </http:request-config>
 
   <http:request-config name="Global_Party_System_API_Config" doc:name="Global Party System API Config">
-    <http:request-connection host="${global.party.api.host}" port="${global.party.api.port}" protocol="HTTPS" >
+    <http:request-connection host="${global.party.api.host}" port="${global.party.api.port}" protocol="HTTPS">
 			<tls:context >
 				<tls:trust-store insecure="true" />
 			</tls:context>
