@@ -126,6 +126,7 @@ var party = payload
 {
   eventType: "customer.update",
   customerId: party.externalIds[0].value default null,
+  globalId: party.globalId default null,
   customerNumber: vars.customerNumber,
   firstName: party.firstName,
   lastName: party.lastName,
