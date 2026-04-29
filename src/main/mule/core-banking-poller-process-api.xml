@@ -146,7 +146,7 @@ var party = payload
       </foreach>
       
       <error-handler>
-        <on-error-continue type="HTTP:CONNECTIVITY" enableNotifications="true" logException="true" doc:name="Continue on Error">
+        <on-error-continue type="ANY" enableNotifications="true" logException="true" doc:name="Continue on Error">
           <logger level="ERROR" message="Error syncing customer: #[error.description]" doc:name="Log Error"/>
         </on-error-continue>
       </error-handler>
